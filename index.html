@@ -1,1 +1,96 @@
 
+
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Voice Calculator</title>
+	<!-- Bootstrap CDN -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<!-- Font Awesome CDN -->
+	
+</head>
+<body style="color: white; background-color: black;">
+  <div class="container mt-5">
+    <div class="main d-flex flex-column align-items-center">
+      <div class="text-center mb-5">
+        <h1 class="display-5"><strong>Voice calculator</strong></h1> 
+      </div>
+      <div class="col-md-6 col-12 mx-auto mb-4">
+        <div class="card border-info" style="background-color: transparent;">
+          <div class="card-body text-center">
+            <input type="text" class="form-control mb-3 mt-3 mx-auto" id="result" placeholder="Result" readonly>	
+          </div>
+        </div>
+		<div class="fixed-bottom  " style="padding-bottom: 200px; padding-left:35%" >
+        <button class="btn btn-outline-info btn-lg mt-3 mx-auto" id="start-button" style="padding-left: 100px; padding-right:100px"><i class="fas fa-microphone"></i> Start</button>
+        <button class="btn btn-light btn-lg mx-auto mt-3" id="stop-button" style="padding-left: 100px; padding-right:100px" disabled><i class="fas fa-stop"></i> Stop</button>
+      </div>
+
+      </div>
+      
+    </div>
+  </div>
+</body>
+
+
+
+
+
+
+	<!-- Bootstrap JS CDN -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<!-- SpeechRecognition API -->
+  
+	<script>
+		const result = document.querySelector('#result');
+		const startButton = document.querySelector('#start-button');
+		const stopButton = document.querySelector('#stop-button');
+		let recognition;
+
+		if ('webkitSpeechRecognition' in window) {
+			recognition = new webkitSpeechRecognition();
+		} else if ('SpeechRecognition' in window) {
+			recognition = new SpeechRecognition();
+		} else {
+			console.log('Speech recognition not supported');
+		}
+
+		recognition.continuous = true;
+		recognition.interimResults = true;
+		recognition.lang = 'en-US';
+
+		startButton.addEventListener('click', () => {
+			result.value = '';
+			startButton.disabled = true;
+			stopButton.disabled = false;
+			recognition.start();
+		});
+
+		stopButton.addEventListener('click', () => {
+			startButton.disabled = false;
+			stopButton.disabled = true;
+			recognition.stop();
+		});
+
+		recognition.addEventListener('result', (e) => {
+			const transcript = Array.from(e.results)
+				.map((result) => result[0])
+				.map((result) => result.transcript)
+				.join('');
+
+			result.value = transcript;
+			if (e.results[0].isFinal) {
+				try {
+					result.value = eval(transcript);
+				} catch (error) {
+					result.value = "try to get";
+				}
+			}
+		});
+	</script>
+</body>
+</html>
